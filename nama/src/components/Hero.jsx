@@ -29,7 +29,7 @@ export default function Hero() {
       <nav className="nav">
         <div className="brand">
           {/* Logo image - place your image at /images/nama-logo.png (public/images or project images folder) */}
-          <img className="brand-logo" src="/images/nama-logo1.png" alt="Nama logo" />
+          <img className="brand-logo" src="https://i.ibb.co/YBsLW2Kx/nama-logo1.png" alt="Nama logo" />
           <div className="brand-text">
             <span className="brand-mark">NAMA</span>
             <span className="brand-sub">ARTISTIC WELLNESS</span>
@@ -91,16 +91,16 @@ export default function Hero() {
           {/* Silhouette / main art */}
           <img
             className="hero-figure"
-            src="/images/dancer.png"
+            src="https://i.ibb.co/0Vjgk2RN/dancer.png"
             alt="Dancer silhouette"
           />
 
           {/* Tiny avatars (dummy) */}
           <div className="avatar-stack">
-            <img src="/images/ava1.png" alt="Client 1" />
-            <img src="/images/ava2.png" alt="Client 2" />
-            <img src="/images/ava3.png" alt="Client 3" />
-            <img src="/images/ava2.png" alt="Client 4" />
+            <img src="https://i.ibb.co/mCjX897B/ava1.png" alt="Client 1" />
+            <img src="https://i.ibb.co/GfhkTg1L/ava2.png" alt="Client 2" />
+            <img src="https://i.ibb.co/QFkpKJgF/ava3.png" alt="Client 3" />
+            <img src="https://i.ibb.co/GfhkTg1L/ava2.png" alt="Client 4" />
 
           </div>
         </div>

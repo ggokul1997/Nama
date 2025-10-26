@@ -7,7 +7,7 @@ export default function Footer() {
     <footer className="footer">
       <div className="container footer-grid">
         <div className="footer-brand">
-          <img className="brand-logo" src="/images/nama-logo1.png" alt="Nama logo" />
+          <img className="brand-logo" src="https://i.ibb.co/YBsLW2Kx/nama-logo1.png" alt="Nama logo" />
           <div className="brand-text">
             <span className="brand-mark">NAMA</span>
             <span className="brand-sub">ARTISTIC WELLNESS</span>
