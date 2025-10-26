@@ -1,59 +1,71 @@
 import React, { useState } from 'react';
 
+const FORMSPREE_ENDPOINT = 'https://formspree.io/f/manlyzpo';
+
 export default function FormModal({ isOpen, onClose, type }) {
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
     email: ''
   });
-  
   const [errors, setErrors] = useState({});
-  
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(null);
+  const [submitError, setSubmitError] = useState(null);
+
   const validateForm = () => {
     const newErrors = {};
-    if (!formData.name.trim()) {
-      newErrors.name = 'Name is required';
-    }
-    if (!formData.phone.trim()) {
-      newErrors.phone = 'Phone number is required';
-    } else if (!/^\d{10}$/.test(formData.phone.trim())) {
-      newErrors.phone = 'Enter a valid 10-digit phone number';
-    }
-    if (type === 'learn' && !formData.email.trim()) {
-      newErrors.email = 'Email is required for downloading program details';
-    } else if (formData.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
-      newErrors.email = 'Enter a valid email address';
-    }
+    if (!formData.name.trim()) newErrors.name = 'Name is required';
+    if (!formData.phone.trim()) newErrors.phone = 'Phone number is required';
+    else if (!/^\+?[0-9\s]{7,15}$/.test(formData.phone.trim())) newErrors.phone = 'Enter a valid phone number';
+    if (type === 'learn' && !formData.email.trim()) newErrors.email = 'Email is required for details';
+    else if (formData.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) newErrors.email = 'Enter a valid email address';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (validateForm()) {
-      if (type === 'learn') {
-        // Trigger program details download
-        console.log('Downloading program details...', formData);
-      } else {
-        // Handle booking submission
-        console.log('Booking session...', formData);
-      }
-      onClose();
-    }
-  };
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-    // Clear error when user starts typing
-    if (errors[name]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: ''
-      }));
+    setFormData(prev => ({ ...prev, [name]: value }));
+    if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitError(null);
+    if (!validateForm()) return;
+    setLoading(true);
+    try {
+      const payload = {
+        formType: type === 'book' ? 'Book Session' : 'Learn More',
+        name: formData.name,
+        phone: formData.phone,
+        email: formData.email
+      };
+
+      const res = await fetch(FORMSPREE_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || 'Submission failed');
+      }
+
+      setSuccess('Thanks — we received your request.');
+      setFormData({ name: '', phone: '', email: '' });
+      // close after short delay so user sees success
+      setTimeout(() => {
+        setSuccess(null);
+        onClose();
+      }, 1400);
+    } catch (err) {
+      setSubmitError('There was an error submitting the form. Please try again.');
+      console.error('FormModal submit error:', err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -62,10 +74,10 @@ export default function FormModal({ isOpen, onClose, type }) {
   return (
     <div className="modal-overlay">
       <div className="modal">
-        <button className="modal-close" onClick={onClose}>&times;</button>
+        <button className="modal-close" onClick={onClose} aria-label="Close">&times;</button>
         <h2>{type === 'book' ? 'Book Your Session' : 'Download Program Details'}</h2>
-        
-        <form onSubmit={handleSubmit} className="form">
+
+        <form onSubmit={handleSubmit} className="form" noValidate>
           <div className="form-group">
             <input
               type="text"
@@ -74,6 +86,7 @@ export default function FormModal({ isOpen, onClose, type }) {
               onChange={handleInputChange}
               placeholder="Full Name"
               className={errors.name ? 'error' : ''}
+              required
             />
             {errors.name && <span className="error-text">{errors.name}</span>}
           </div>
@@ -86,6 +99,7 @@ export default function FormModal({ isOpen, onClose, type }) {
               onChange={handleInputChange}
               placeholder="Phone Number"
               className={errors.phone ? 'error' : ''}
+              required
             />
             {errors.phone && <span className="error-text">{errors.phone}</span>}
           </div>
@@ -102,11 +116,15 @@ export default function FormModal({ isOpen, onClose, type }) {
             {errors.email && <span className="error-text">{errors.email}</span>}
           </div>
 
-          <button 
-            type="submit" 
-            className={`cta cta--${type === 'book' ? 'primary' : 'secondary'} full-width`}
+          {submitError && <div className="error-text">{submitError}</div>}
+          {success && <div className="form-success">{success}</div>}
+
+          <button
+            type="submit"
+            className={`cta ${type === 'book' ? 'cta--secondary' : 'cta--secondary'} full-width`}
+            disabled={loading}
           >
-            {type === 'book' ? 'BOOK NOW' : 'DOWNLOAD DETAILS'}
+            {loading ? 'Sending...' : (type === 'book' ? 'BOOK NOW' : 'DOWNLOAD DETAILS')}
           </button>
         </form>
       </div>
