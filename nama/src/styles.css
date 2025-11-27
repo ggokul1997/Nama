@@ -565,3 +565,9 @@ body{
     order: 3;
   }
 }
+
+/* Custom styles for the Questionnaire Modal */
+.questionnaire-modal {
+    max-width: 600px; /* Set a max width for the modal */
+    margin: auto; /* Center the modal horizontally */
+}

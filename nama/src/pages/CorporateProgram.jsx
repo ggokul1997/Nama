@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import QuestionnaireModal from './QuestionnaireModal'; // Import the modal component
 import { Container, Row, Col, Card, Form, Button, Accordion, Badge } from 'react-bootstrap';
 
 // Define the custom theme colors
@@ -60,12 +61,19 @@ const ProgramCard = ({ eventKey, title, tag, coreFocus, breakdown, formatTags })
                     View Agenda
                 </Button>
             </div>
-
         </Card.Body>
     </Card>
 );
 
 const CorporateProgram = () => {
+    const [showModal, setShowModal] = useState(false); // State to manage modal visibility
+
+    useEffect(() => {
+        setShowModal(true); // Open modal when component mounts
+    }, []);
+
+    const handleCloseModal = () => setShowModal(false); // Function to close modal
+
     // Dummy Data based on the UI concept and design brief
     const programsData = [
         {
@@ -120,13 +128,21 @@ const CorporateProgram = () => {
 
     return (
         <Container className="my-5 py-5">
+            <Button 
+                variant="primary" 
+                style={{ position: 'absolute', top: '20px', right: '20px' }} 
+                onClick={() => setShowModal(true)}
+            >
+                Take a Survey
+            </Button>
+            <QuestionnaireModal show={showModal} handleClose={handleCloseModal} /> {/* Render the modal */}
             {/* ------------------------------------------- */}
             {/* HERO SECTION & Filters */}
             {/* ------------------------------------------- */}
             <Row className="mb-5">
                 <Col lg={8}>
                     <h1 className="display-4 fw-bold mb-3" style={{ color: ACCENT_COLOR_TEXT }}>
-                        Corporate <span style={{ color: NAMA_GREEN}}>Programs</span>
+                        Corporate <span style={{ color: NAMA_GREEN }}>Programs</span>
                     </h1>
                     <p className="lead text-muted mb-4">
                         Here are six signature programs designed for NAMA Artistic wellbeing blending art forms and expert guidance, to empower your team with wellness, tailored to specific objectives.
@@ -149,7 +165,6 @@ const CorporateProgram = () => {
                     </Button>
                 </Col>
             </Row>
-
             {/* ------------------------------------------- */}
             {/* MAIN CONTENT: PROGRAMS CATALOG & BOOKING FORM */}
             {/* ------------------------------------------- */}
