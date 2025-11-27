@@ -3,6 +3,8 @@ import FormModal from './FormModal'
 import FAQ from './FAQ'
 import Contact from './Contact'
 import Footer from './Footer'
+import Programs from './Programs'
+
 
 export default function Hero() {
   const [modalConfig, setModalConfig] = useState({
@@ -145,6 +147,8 @@ export default function Hero() {
         </div>
       </div>
     </section>
+
+    <Programs />
 
     {/* FAQ Section */}
     <FAQ />
